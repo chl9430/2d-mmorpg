@@ -63,7 +63,10 @@ public class ArrowController : CreatureController
                 else
                 {
                     // 피격 판정
-                    Debug.Log(go.name);
+                    CreatureController cc = go.GetComponent<CreatureController>();
+                    if (cc != null)
+                        cc.OnDamaged();
+
                     Managers.Resource.Destroy(gameObject);
                 }
             }
