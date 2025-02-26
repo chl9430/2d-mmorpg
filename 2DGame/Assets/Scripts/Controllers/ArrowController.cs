@@ -22,6 +22,9 @@ public class ArrowController : CreatureController
                 break;
         }
 
+        State = CreatureState.Moving;
+        _speed = 15.0f;
+
         base.Init();
     }
 
@@ -29,51 +32,47 @@ public class ArrowController : CreatureController
     {
     }
 
-    protected override void UpdateIdle()
+    protected override void MoveToNextPos()
     {
-        if (_dir != MoveDir.None)
+        Vector3Int destPos = CellPos;
+        switch (_dir)
         {
-            Vector3Int destPos = CellPos;
-            switch (_dir)
-            {
-                case MoveDir.Up:
-                    destPos += Vector3Int.up;
-                    break;
-                case MoveDir.Down:
-                    destPos += Vector3Int.down;
-                    break;
-                case MoveDir.Left:
-                    destPos += Vector3Int.left;
-                    break;
-                case MoveDir.Right:
-                    destPos += Vector3Int.right;
-                    break;
-            }
+            case MoveDir.Up:
+                destPos += Vector3Int.up;
+                break;
+            case MoveDir.Down:
+                destPos += Vector3Int.down;
+                break;
+            case MoveDir.Left:
+                destPos += Vector3Int.left;
+                break;
+            case MoveDir.Right:
+                destPos += Vector3Int.right;
+                break;
+        }
 
-            State = CreatureState.Moving;
-            // 가게 될 곳이 갈 수 있는지 확인한다.
-            if (Managers.Map.CanGo(destPos))
+        // 가게 될 곳이 갈 수 있는지 확인한다.
+        if (Managers.Map.CanGo(destPos))
+        {
+            GameObject go = Managers.Object.Find(destPos);
+            // 해당 좌표에 다른 오브젝트(몬스터)가 있는지 확인한다.
+            if (go == null)
             {
-                GameObject go = Managers.Object.Find(destPos);
-                // 해당 좌표에 다른 오브젝트(몬스터)가 있는지 확인한다.
-                if (go == null)
-                {
-                    CellPos = destPos;
-                }
-                else
-                {
-                    // 피격 판정
-                    CreatureController cc = go.GetComponent<CreatureController>();
-                    if (cc != null)
-                        cc.OnDamaged();
-
-                    Managers.Resource.Destroy(gameObject);
-                }
+                CellPos = destPos;
             }
             else
             {
+                // 피격 판정
+                CreatureController cc = go.GetComponent<CreatureController>();
+                if (cc != null)
+                    cc.OnDamaged();
+
                 Managers.Resource.Destroy(gameObject);
             }
+        }
+        else
+        {
+            Managers.Resource.Destroy(gameObject);
         }
     }
 }

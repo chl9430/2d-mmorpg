@@ -11,7 +11,7 @@ public class CreatureController : MonoBehaviour
     protected SpriteRenderer _sprite;
 
     protected CreatureState _state = CreatureState.Idle;
-    public CreatureState State
+    public virtual CreatureState State
     {
         get { return _state; }
         set
@@ -181,39 +181,8 @@ public class CreatureController : MonoBehaviour
         }
     }
 
-    // 이동 가능한 상태라면, 실제 좌표를 이동한다.
     protected virtual void UpdateIdle()
     {
-        if (_dir != MoveDir.None)
-        {
-            Vector3Int destPos = CellPos;
-            switch (_dir)
-            {
-                case MoveDir.Up:
-                    destPos += Vector3Int.up;
-                    break;
-                case MoveDir.Down:
-                    destPos += Vector3Int.down;
-                    break;
-                case MoveDir.Left:
-                    destPos += Vector3Int.left;
-                    break;
-                case MoveDir.Right:
-                    destPos += Vector3Int.right;
-                    break;
-            }
-
-            State = CreatureState.Moving;
-            // 가게 될 곳이 갈 수 있는지 확인한다.
-            if (Managers.Map.CanGo(destPos))
-            {
-                // 해당 좌표에 다른 오브젝트(몬스터)가 있는지 확인한다.
-                if (Managers.Object.Find(destPos) == null)
-                {
-                    CellPos = destPos;
-                }
-            }
-        }
     }
 
     // 부드럽게 이동하는 기능을 처리한다.
@@ -229,15 +198,49 @@ public class CreatureController : MonoBehaviour
         if (dist < _speed * Time.deltaTime)
         {
             transform.position = destPos;
-            // 예외적으로 애니메이션을 직접 컨트롤
-            _state = CreatureState.Idle;
-            if (_dir == MoveDir.None)
-                UpdateAnimation();
+            MoveToNextPos();
         }
         else
         {
             transform.position += moveDir.normalized * _speed * Time.deltaTime;
             State = CreatureState.Moving;
+        }
+    }
+
+    protected virtual void MoveToNextPos()
+    {
+        if (_dir == MoveDir.None)
+        {
+            State = CreatureState.Idle;
+            return;
+        }
+
+        Vector3Int destPos = CellPos;
+
+        switch (_dir)
+        {
+            case MoveDir.Up:
+                destPos += Vector3Int.up;
+                break;
+            case MoveDir.Down:
+                destPos += Vector3Int.down;
+                break;
+            case MoveDir.Left:
+                destPos += Vector3Int.left;
+                break;
+            case MoveDir.Right:
+                destPos += Vector3Int.right;
+                break;
+        }
+
+        // 가게 될 곳이 갈 수 있는지 확인한다.
+        if (Managers.Map.CanGo(destPos))
+        {
+            // 해당 좌표에 다른 오브젝트(몬스터)가 있는지 확인한다.
+            if (Managers.Object.Find(destPos) == null)
+            {
+                CellPos = destPos;
+            }
         }
     }
 
