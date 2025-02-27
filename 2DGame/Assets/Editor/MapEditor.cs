@@ -30,14 +30,14 @@ public class MapEditor
             using (var writer = File.CreateText($"Assets/Resources/Map/{go.name}.txt"))
             {
                 writer.WriteLine(tmBase.cellBounds.xMin);
-                writer.WriteLine(tmBase.cellBounds.xMax);
+                writer.WriteLine(tmBase.cellBounds.xMax - 1);
                 writer.WriteLine(tmBase.cellBounds.yMin);
-                writer.WriteLine(tmBase.cellBounds.yMax);
+                writer.WriteLine(tmBase.cellBounds.yMax - 1);
 
                 // 타일 맵을 순회하며, 해당위치에 타일이 존재한다면 1, 존재하지 않다면 0을 출력한다.
-                for (int y = tmBase.cellBounds.yMax; y >= tmBase.cellBounds.yMin; y--)
+                for (int y = tmBase.cellBounds.yMax - 1; y >= tmBase.cellBounds.yMin; y--)
                 {
-                    for (int x = tmBase.cellBounds.xMin; x <= tmBase.cellBounds.xMax; x++)
+                    for (int x = tmBase.cellBounds.xMin; x <= tmBase.cellBounds.xMax - 1; x++)
                     {
                         TileBase tile = tm.GetTile(new Vector3Int(x, y, 0));
                         if (tile != null)
