@@ -14,35 +14,34 @@ enum MsgId {
 }
 
 message S_EnterGame {
-	PlayerInfo player = 1;
+  PlayerInfo player = 1;
 }
 
 message S_LeaveGame {
-
 }
 
-message S_SPAWN{
-	repeated PlayerInfo = players = 1;
+message S_Spawn {
+  repeated PlayerInfo players = 1;
 }
 
-message S_DESPAWN {
-	repeated int32 playerIds = 1;
+message S_Despawn {
+  repeated int32 playerIds = 1;
 }
 
 message C_Move {
-	int32 posX = 1;
-	int32 posY = 2;
+  int32 posX = 1;
+  int32 posY = 2;
 }
 
 message S_Move {
-	int32 playerId = 1;
-	int32 posX = 2;
-	int32 posY = 3;
+  int32 playerId = 1;
+  int32 posX = 2;
+  int32 posY = 3;
 }
 
 message PlayerInfo {
-	int32 playerId = 1;
-	string name = 2;
-	int32 posX = 3;
-	int32 posY = 4;
+  int32 playerId = 1;
+  string name = 2;
+  int32 posX = 3;
+  int32 posY = 4;
 }
