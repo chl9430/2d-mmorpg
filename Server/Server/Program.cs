@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Server.Game;
 using ServerCore;
 
 namespace Server
@@ -18,6 +19,8 @@ namespace Server
 
 		static void Main(string[] args)
 		{
+			RoomManager.Instance.Add();
+
             // dns(domain name service)
             string host = Dns.GetHostName();
 			IPHostEntry ipHost = Dns.GetHostEntry(host);
