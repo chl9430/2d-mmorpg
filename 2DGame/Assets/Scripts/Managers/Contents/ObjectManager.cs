@@ -21,7 +21,7 @@ public class ObjectManager
 
             MyPlayer = go.GetComponent<MyPlayerController>();
             MyPlayer.Id = info.PlayerId;
-            MyPlayer.CellPos = new Vector3Int(info.PosX, info.PosY, 0);
+            MyPlayer.PosInfo = info.PosInfo;
         }
         else
         {
@@ -31,18 +31,18 @@ public class ObjectManager
 
             PlayerController pc = go.GetComponent<PlayerController>();
             pc.Id = info.PlayerId;
-            pc.CellPos = new Vector3Int(info.PosX, info.PosY, 0);
+            pc.PosInfo = info.PosInfo;
         }
-    }
-
-    public void Add(int id, GameObject go)
-    {
-        _objects.Add(id, go);
     }
 
     public void Remove(int id)
     {
+        GameObject go = FindById(id);
+        if (go == null)
+            return;
+
         _objects.Remove(id);
+        Managers.Resource.Destroy(go);
     }
 
     public void RemoveMyPlayer()
@@ -52,6 +52,13 @@ public class ObjectManager
 
         Remove(MyPlayer.Id);
         MyPlayer = null;
+    }
+
+    public GameObject FindById(int id)
+    {
+        GameObject go = null;
+        _objects.TryGetValue(id, out go);
+        return go;
     }
 
     public GameObject Find(Vector3Int cellPos)
@@ -82,6 +89,8 @@ public class ObjectManager
 
     public void Clear()
     {
+        foreach (GameObject obj in _objects.Values)
+            Managers.Resource.Destroy(obj);
         _objects.Clear();
     }
 }

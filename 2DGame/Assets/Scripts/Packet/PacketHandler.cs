@@ -46,6 +46,16 @@ class PacketHandler
         S_Move movePacket = packet as S_Move;
         ServerSession serverSession = session as ServerSession;
 
-        Debug.Log("S_MoveHandler");
+        GameObject go = Managers.Object.FindById(movePacket.PlayerId);
+        if (go == null)
+            return;
+
+        CreatureController cc = go.GetComponent<CreatureController>();
+        if (cc == null)
+            return;
+
+        // C_MOVE를 서버로 보낼때 이미 본인은 클라에서 좌표가 이동된 상태로
+        // S_MOVE를 받고 덮어씌워서 또 이동시킬 필요는 없다
+        cc.PosInfo = movePacket.PosInfo;
     }
 }
