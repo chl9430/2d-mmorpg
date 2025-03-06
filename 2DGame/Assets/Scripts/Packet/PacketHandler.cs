@@ -44,7 +44,6 @@ class PacketHandler
     public static void S_MoveHandler(PacketSession session, IMessage packet)
     {
         S_Move movePacket = packet as S_Move;
-        ServerSession serverSession = session as ServerSession;
 
         GameObject go = Managers.Object.FindById(movePacket.PlayerId);
         if (go == null)
@@ -57,5 +56,20 @@ class PacketHandler
         // C_MOVE를 서버로 보낼때 이미 본인은 클라에서 좌표가 이동된 상태로
         // S_MOVE를 받고 덮어씌워서 또 이동시킬 필요는 없다
         cc.PosInfo = movePacket.PosInfo;
+    }
+
+    public static void S_SkillHandler(PacketSession session, IMessage packet)
+    {
+        S_Skill skillPacket = packet as S_Skill;
+
+        GameObject go = Managers.Object.FindById(skillPacket.PlayerId);
+        if (go == null)
+            return;
+
+        PlayerController pc = go.GetComponent<PlayerController>();
+        if (pc != null)
+        {
+            pc.UseSkill(skillPacket.Info.SkillId);
+        }
     }
 }
