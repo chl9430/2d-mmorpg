@@ -19,7 +19,7 @@ namespace Server
 
 		static void Main(string[] args)
 		{
-			RoomManager.Instance.Add();
+			RoomManager.Instance.Add(1);
 
             // dns(domain name service)
             string host = Dns.GetHostName();
