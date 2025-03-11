@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Server.Data;
 using Server.Game;
 using ServerCore;
 
@@ -19,6 +20,10 @@ namespace Server
 
 		static void Main(string[] args)
 		{
+			// 클라이언트 내 원본 데이터를 로드합니다.
+			ConfigManager.LoadConfig();
+			DataManager.LoadData();
+
 			RoomManager.Instance.Add(1);
 
             // dns(domain name service)
