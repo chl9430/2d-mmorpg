@@ -18,7 +18,7 @@ class PacketHandler
     {
         S_LeaveGame leaveGamePacket = packet as S_LeaveGame;
 
-        Managers.Object.RemoveMyPlayer();
+        Managers.Object.Clear();
     }
 
     public static void S_SpawnHandler(PacketSession session, IMessage packet)
@@ -49,13 +49,13 @@ class PacketHandler
         if (go == null)
             return;
 
-        CreatureController cc = go.GetComponent<CreatureController>();
-        if (cc == null)
+        BaseController bc = go.GetComponent<BaseController>();
+        if (bc == null)
             return;
 
         // C_MOVE를 서버로 보낼때 이미 본인은 클라에서 좌표가 이동된 상태로
         // S_MOVE를 받고 덮어씌워서 또 이동시킬 필요는 없다
-        cc.PosInfo = movePacket.PosInfo;
+        bc.PosInfo = movePacket.PosInfo;
     }
 
     public static void S_SkillHandler(PacketSession session, IMessage packet)
@@ -85,6 +85,22 @@ class PacketHandler
         if (cc != null)
         {
             cc.Hp = changePacket.Hp;
+        }
+    }
+
+    public static void S_DieHandler(PacketSession session, IMessage packet)
+    {
+        S_Die diePacket = packet as S_Die;
+
+        GameObject go = Managers.Object.FindById(diePacket.ObjectId);
+        if (go == null)
+            return;
+
+        CreatureController cc = go.GetComponent<CreatureController>();
+        if (cc != null)
+        {
+            cc.Hp = 0;
+            cc.OnDead();
         }
     }
 }

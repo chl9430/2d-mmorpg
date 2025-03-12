@@ -120,7 +120,7 @@ public class MyPlayerController : PlayerController
         if (Managers.Map.CanGo(destPos))
         {
             // 해당 좌표에 다른 오브젝트(몬스터)가 있는지 확인한다.
-            if (Managers.Object.Find(destPos) == null)
+            if (Managers.Object.FindCreature(destPos) == null)
             {
                 CellPos = destPos;
             }
