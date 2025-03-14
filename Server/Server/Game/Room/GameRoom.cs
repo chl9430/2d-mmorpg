@@ -31,6 +31,7 @@ namespace Server.Game
             EnterGame(monster);
         }
 
+        // 누군가가 주기적으로 호출해줘야 한다.
         public void Update()
         {
             foreach (Monster monster in _monsters.Values)
@@ -42,6 +43,8 @@ namespace Server.Game
             {
                 projectile.Update();
             }
+
+            Flush();
         }
 
         public void EnterGame(GameObject gameObject)
