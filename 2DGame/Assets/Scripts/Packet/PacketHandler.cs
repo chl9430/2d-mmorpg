@@ -49,6 +49,10 @@ class PacketHandler
         if (go == null)
             return;
 
+        // 내가 조종하는 플레이어는 이미 좌표가 움직였기 때문에 함수를 리턴
+        if (Managers.Object.MyPlayer.Id == movePacket.ObjectId)
+            return;
+
         BaseController bc = go.GetComponent<BaseController>();
         if (bc == null)
             return;
