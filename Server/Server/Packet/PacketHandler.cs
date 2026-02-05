@@ -1,6 +1,7 @@
 ﻿using Google.Protobuf;
 using Google.Protobuf.Protocol;
 using Server;
+using Server.DB;
 using Server.Game;
 using ServerCore;
 using System;
@@ -41,5 +42,26 @@ class PacketHandler
             return;
 
         room.Push(room.HandleSkill, player, skillPacket);
+    }
+
+    public static void C_LoginHandler(PacketSession session, IMessage packet)
+    {
+        C_Login loginPacket = packet as C_Login;
+        ClientSession clientSession = session as ClientSession;
+        clientSession.HandleLogin(loginPacket);
+    }
+
+    public static void C_EnterGameHandler(PacketSession session, IMessage packet)
+    {
+        C_EnterGame enterGamePacket = packet as C_EnterGame;
+        ClientSession clientSession = session as ClientSession;
+        clientSession.HandleEnterGame(enterGamePacket);
+    }
+
+    public static void C_CreatePlayerHandler(PacketSession session, IMessage packet)
+    {
+        C_CreatePlayer createPlayerPacket = packet as C_CreatePlayer;
+        ClientSession clientSession = session as ClientSession;
+        clientSession.HandleCreatePlayer(createPlayerPacket);
     }
 }

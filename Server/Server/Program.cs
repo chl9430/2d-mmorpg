@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Server.Data;
+using Server.DB;
+using Server.Game;
+using ServerCore;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using Server.Data;
-using Server.Game;
-using ServerCore;
 
 namespace Server
 {
@@ -32,7 +33,7 @@ namespace Server
 			// 클라이언트 내 원본 데이터를 로드합니다.
 			ConfigManager.LoadConfig();
 			DataManager.LoadData();
-
+			
 			GameRoom room = RoomManager.Instance.Add(1);
 			TickRoom(room, 50);
 
