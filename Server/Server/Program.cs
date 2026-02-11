@@ -54,8 +54,7 @@ namespace Server
 
 			while (true)
 			{
-				// JobTimer.Instance.Flush();
-				Thread.Sleep(100);
+				DbTransaction.Instance.Flush();
 			}
 		}
 	}
