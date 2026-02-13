@@ -109,6 +109,31 @@ namespace Server
                 MyPlayer.Info.PosInfo.PosY = 0;
                 MyPlayer.Stat.MergeFrom(playerInfo.StatInfo);
                 MyPlayer.Session = this;
+
+                S_ItemList itemListPacket = new S_ItemList();
+
+                // 아이템 목록을 갖고온다.
+                // 이 부분은 db접근 안전지대.
+                // GameRoom처럼 Jobserializer같은 곳에서 하면 안된다.
+                using (AppDbContext db = new AppDbContext())
+                {
+                    List<ItemDb> items = db.Items.Where(i => i.OwnerDbId == playerInfo.PlayerDbId).ToList();
+
+                    foreach (ItemDb itemDb in items)
+                    {
+                        Item item = Item.MakeItem(itemDb);
+                        if (item != null)
+                        {
+                            MyPlayer.Inven.Add(item);
+
+                            ItemInfo info = new ItemInfo();
+                            info.MergeFrom(item.Info);
+                            itemListPacket.Items.Add(info);
+                        }
+                    }
+                }
+
+                Send(itemListPacket);
             }
 
             ServerState = PlayerServerState.ServerStateGame;

@@ -60,4 +60,62 @@ namespace Server.Data
         }
     }
     #endregion
+
+    #region Item
+    [Serializable]
+    public class ItemData
+    {
+        public int id;
+        // 다국어 서비스일 경우, 이름에 해당하는 아이디를 따로 만들어서 실행중인 언어에 맞게 가져오는 경우도 있다.
+        public string name;
+        public ItemType itemType;
+    }
+
+    public class WeaponData : ItemData
+    {
+        public WeaponType weaponType;
+        public int damage;
+    }
+
+    public class ArmorData : ItemData
+    {
+        public ArmorType armorType;
+        public int defense;
+    }
+
+    public class ConsumableData : ItemData
+    {
+        public ConsumableType consumableType;
+        public int maxCount;
+    }
+
+    [Serializable]
+    public class ItemLoader : ILoader<int, ItemData>
+    {
+        public List<WeaponData> weapons = new List<WeaponData>();
+        public List<ArmorData> armors = new List<ArmorData>();
+        public List<ConsumableData> consumables = new List<ConsumableData>();
+
+        public Dictionary<int, ItemData> MakeDict()
+        {
+            Dictionary<int, ItemData> dict = new Dictionary<int, ItemData>();
+            foreach (ItemData item in weapons)
+            {
+                item.itemType = ItemType.Weapon;
+                dict.Add(item.id, item);
+            }
+            foreach (ItemData item in armors)
+            {
+                item.itemType = ItemType.Armor;
+                dict.Add(item.id, item);
+            }
+            foreach (ItemData item in consumables)
+            {
+                item.itemType = ItemType.Consumable;
+                dict.Add(item.id, item);
+            }
+            return dict;
+        }
+    }
+    #endregion
 }
