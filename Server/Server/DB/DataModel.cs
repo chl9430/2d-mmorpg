@@ -44,6 +44,7 @@ namespace Server.DB
 
         // 창고에 보관중이나 장착중인 아이템도 슬롯번호로 관리하는 경우가 있다.
         public int Slot { get; set; }
+        public bool Equipped { get; set; } = false;
 
         [ForeignKey("Owner")]
         public int? OwnerDbId { get; set; }

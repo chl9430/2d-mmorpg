@@ -33,49 +33,6 @@ namespace Server
 			// 클라이언트 내 원본 데이터를 로드합니다.
 			ConfigManager.LoadConfig();
 			DataManager.LoadData();
-
-			// Test Code
-			using (AppDbContext db = new AppDbContext())
-			{
-                // FirstOrDefault : 없으면 null을 반환
-                PlayerDb player = db.Players.FirstOrDefault();
-				if (player != null)
-				{
-					db.Items.Add(new ItemDb()
-					{
-						TemplateId = 1,
-						Count = 1,
-						Slot = 0,
-						Owner = player
-					});
-
-                    db.Items.Add(new ItemDb()
-                    {
-                        TemplateId = 100,
-                        Count = 1,
-                        Slot = 1,
-                        Owner = player
-                    });
-
-                    db.Items.Add(new ItemDb()
-                    {
-                        TemplateId = 101,
-                        Count = 1,
-                        Slot = 2,
-                        Owner = player
-                    });
-
-                    db.Items.Add(new ItemDb()
-                    {
-                        TemplateId = 200,
-                        Count = 0,
-                        Slot = 5,
-                        Owner = player
-                    });
-
-					db.SaveChangesEx();
-                }
-			}
 			
 			GameRoom room = RoomManager.Instance.Add(1);
 			TickRoom(room, 50);

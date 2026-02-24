@@ -232,7 +232,7 @@ PrefabInstance:
     - target: {fileID: 4694238834872985294, guid: d46cde084efef4e498920ff80431bcf9,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 281.5
+      value: 250
       objectReference: {fileID: 0}
     - target: {fileID: 4694238834872985294, guid: d46cde084efef4e498920ff80431bcf9,
         type: 3}
@@ -278,6 +278,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 391692149058989319}
     m_Modifications:
+    - target: {fileID: 3868543343175802090, guid: 8f87c1a035f71674fa6be03318b15377,
+        type: 3}
+      propertyPath: m_Name
+      value: NameText
+      objectReference: {fileID: 0}
     - target: {fileID: 6886357764342441211, guid: 8f87c1a035f71674fa6be03318b15377,
         type: 3}
       propertyPath: m_Name
@@ -361,7 +366,7 @@ PrefabInstance:
     - target: {fileID: 7586274978221663603, guid: 8f87c1a035f71674fa6be03318b15377,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -247
+      value: -250
       objectReference: {fileID: 0}
     - target: {fileID: 7586274978221663603, guid: 8f87c1a035f71674fa6be03318b15377,
         type: 3}
@@ -384,7 +389,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 1797421604471081782, guid: 8f87c1a035f71674fa6be03318b15377, type: 3}
+    - {fileID: 1116145163900037362, guid: 8f87c1a035f71674fa6be03318b15377, type: 3}
+    - {fileID: 5780272989976958108, guid: 8f87c1a035f71674fa6be03318b15377, type: 3}
+    - {fileID: 3812070978479349256, guid: 8f87c1a035f71674fa6be03318b15377, type: 3}
+    - {fileID: 7824195038624286785, guid: 8f87c1a035f71674fa6be03318b15377, type: 3}
+    - {fileID: 8778890540687775334, guid: 8f87c1a035f71674fa6be03318b15377, type: 3}
+    - {fileID: 3799529563586189217, guid: 8f87c1a035f71674fa6be03318b15377, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f87c1a035f71674fa6be03318b15377, type: 3}
