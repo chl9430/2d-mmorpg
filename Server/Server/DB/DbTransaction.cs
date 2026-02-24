@@ -100,7 +100,7 @@ namespace Server.DB
                 TemplateId = rewardData.itemId,
                 Count = rewardData.count,
                 Slot = slot.Value,
-                OwnerDbId = player.Id,
+                OwnerDbId = player.PlayerDbId,
             };
 
             Instance.Push(() =>

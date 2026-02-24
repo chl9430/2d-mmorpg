@@ -16,6 +16,13 @@ public class UI_Inventory : UI_Base
         foreach (Transform child in grid.transform)
             Destroy(child.gameObject);
 
+        for (int i = 0; i < 20; i++)
+        {
+            GameObject go = Managers.Resource.Instantiate("UI/Scene/UI_Inventory_Item", grid.transform);
+            UI_Inventory_Item item = go.GetOrAddComponent<UI_Inventory_Item>();
+            Items.Add(item);
+        }
+
         RefreshUI();
     }
 

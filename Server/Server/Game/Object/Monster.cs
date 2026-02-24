@@ -31,6 +31,7 @@ namespace Server.Game
         }
 
         // FSM (Finite State Machine)
+        IJob _job;
         public override void Update()
         {
             switch (State)
@@ -48,6 +49,10 @@ namespace Server.Game
                     UpdateDead();
                     break;
             }
+
+            // 5프레임 (0.2초마다 한번씩 Update)
+            if (Room != null)
+                _job = Room.PushAfter(200, Update);
         }
 
         Player _target;
@@ -201,6 +206,12 @@ namespace Server.Game
 
         public override void OnDead(GameObject attacker)
         {
+            if (_job != null)
+            {
+                _job.Cancel = true;
+                _job = null;
+            }
+
             base.OnDead(attacker);
 
             GameObject owner = attacker.GetOwner();
