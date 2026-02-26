@@ -15,6 +15,19 @@ namespace Server
         Dictionary<int, ClientSession> _sessions = new Dictionary<int, ClientSession>();
         object _lock = new object();
 
+        public List<ClientSession> GetSessions()
+        {
+            List<ClientSession> sessions = new List<ClientSession>();
+
+            lock (_lock)
+            {
+                // 딕셔너리를 리스트로 만드는 작업은 패킷을 전송하는 거에 비해 부담이 적다.
+                sessions = _sessions.Values.ToList();
+            }
+
+            return sessions;
+        }
+
         public ClientSession Generate()
         {
             lock (_lock)
