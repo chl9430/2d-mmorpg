@@ -134,6 +134,10 @@ namespace Server.Game
             if (posInfo.PosY < MinY || posInfo.PosY > MaxY)
                 return false;
 
+            // Zone
+            Zone zone = gameObject.Room.GetZone(gameObject.CellPos);
+            zone.Remove(gameObject);
+
             {
                 int x = posInfo.PosX - MinX;
                 int y = MaxY - posInfo.PosY;
@@ -144,10 +148,8 @@ namespace Server.Game
             return true;
         }
 
-        public bool ApplyMove(GameObject gameObject, Vector2Int dest)
+        public bool ApplyMove(GameObject gameObject, Vector2Int dest, bool checkObjects = true, bool collision = true)
         {
-            ApplyLeave(gameObject);
-
             if (gameObject.Room == null)
                 return false;
             if (gameObject.Room.Map != this)
@@ -155,13 +157,75 @@ namespace Server.Game
 
             PositionInfo posInfo = gameObject.PosInfo;
 
-            if (CanGo(dest, true) == false)
+            if (CanGo(dest, checkObjects) == false)
                 return false;
 
+            if (collision)
             {
-                int x = dest.x - MinX;
-                int y = MaxY - dest.y;
-                _objects[y, x] = gameObject;
+                // 기존 좌표에 나를 제거하고
+                {
+                    int x = posInfo.PosX - MinX;
+                    int y = MaxY - posInfo.PosY;
+                    if (_objects[y, x] == gameObject)
+                        _objects[y, x] = null;
+                }
+                // 새로 이동한 좌표에 나를 추가한다.
+                {
+                    int x = dest.x - MinX;
+                    int y = MaxY - dest.y;
+                    _objects[y, x] = gameObject;
+                }
+            }
+
+            // Zone
+            GameObjectType type = ObjectManager.GetObjectTypeById(gameObject.Id);
+            if (type == GameObjectType.Player)
+            {
+                Player player = gameObject as Player;
+                if (player != null)
+                {
+                    Zone now = gameObject.Room.GetZone(gameObject.CellPos);
+                    Zone after = gameObject.Room.GetZone(dest);
+
+                    // 다른 존으로 이동했다면
+                    if (now != after)
+                    {
+                        now.Players.Remove(player);
+                        after.Players.Add(player);
+                    }
+                }
+            }
+            else if (type == GameObjectType.Monster)
+            {
+                Monster monster = gameObject as Monster;
+                if (monster != null)
+                {
+                    Zone now = gameObject.Room.GetZone(gameObject.CellPos);
+                    Zone after = gameObject.Room.GetZone(dest);
+
+                    // 다른 존으로 이동했다면
+                    if (now != after)
+                    {
+                        now.Monsters.Remove(monster);
+                        after.Monsters.Add(monster);
+                    }
+                }
+            }
+            else if (type == GameObjectType.Projectile)
+            {
+                Projectile projectile = gameObject as Projectile;
+                if (projectile != null)
+                {
+                    Zone now = gameObject.Room.GetZone(gameObject.CellPos);
+                    Zone after = gameObject.Room.GetZone(dest);
+
+                    // 다른 존으로 이동했다면
+                    if (now != after)
+                    {
+                        now.Projectiles.Remove(projectile);
+                        after.Projectiles.Add(projectile);
+                    }
+                }
             }
 
             // 실제 좌표 이동
@@ -207,7 +271,7 @@ namespace Server.Game
         int[] _deltaX = new int[] { 0, 0, -1, 1 };
         int[] _cost = new int[] { 10, 10, 10, 10 };
 
-        public List<Vector2Int> FindPath(Vector2Int startCellPos, Vector2Int destCellPos, bool checkObjects = true)
+        public List<Vector2Int> FindPath(Vector2Int startCellPos, Vector2Int destCellPos, bool checkObjects = true, int maxDist = 10)
         {
             List<Pos> path = new List<Pos>();
 
@@ -260,6 +324,10 @@ namespace Server.Game
                 {
                     Pos next = new Pos(node.Y + _deltaY[i], node.X + _deltaX[i]);
 
+                    // 너무 멀면 스킵
+                    if (Math.Abs(pos.Y - next.Y) + Math.Abs(pos.X - next.X) > maxDist)
+                        continue;
+
                     // 유효 범위를 벗어났으면 스킵
                     // 벽으로 막혀서 갈 수 없으면 스킵
                     if (next.Y != dest.Y || next.X != dest.X)
@@ -302,14 +370,38 @@ namespace Server.Game
         {
             List<Vector2Int> cells = new List<Vector2Int>();
 
-            Pos pos = dest;
-            while (parent[pos] != pos)
+            // 길을 못 찾으면
+            if (parent.ContainsKey(dest) == false)
             {
-                cells.Add(Pos2Cell(pos));
-                pos = parent[pos];
+                // 그나마 베스트 위치를 찾는다.
+                Pos best = new Pos();
+                int bestDist = Int32.MaxValue;
+
+                foreach (Pos pos in parent.Keys)
+                {
+                    int dist = Math.Abs(dest.X - pos.X) + Math.Abs(dest.Y - pos.Y);
+
+                    // 제일 우수한 후보를 뽑는다.
+                    if (dist < bestDist)
+                    {
+                        best = pos;
+                        bestDist = dist;
+                    }
+                }
+
+                dest = best;
             }
-            cells.Add(Pos2Cell(pos));
-            cells.Reverse();
+
+            {
+                Pos pos = dest;
+                while (parent[pos] != pos)
+                {
+                    cells.Add(Pos2Cell(pos));
+                    pos = parent[pos];
+                }
+                cells.Add(Pos2Cell(pos));
+                cells.Reverse();
+            }
 
             return cells;
         }

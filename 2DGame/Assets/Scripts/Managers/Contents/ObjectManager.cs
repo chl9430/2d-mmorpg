@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using UnityEngine;
+using static UnityEngine.AdaptivePerformance.Provider.AdaptivePerformanceSubsystemDescriptor;
 
 public class ObjectManager
 {
@@ -20,6 +21,11 @@ public class ObjectManager
 
     public void Add(ObjectInfo info, bool myPlayer = false)
     {
+        if (MyPlayer != null && MyPlayer.Id == info.ObjectId)
+            return;
+        if (_objects.ContainsKey(info.ObjectId))
+            return;
+
         GameObjectType objectType = GetObjectTypeById(info.ObjectId);
         if (objectType == GameObjectType.Player)
         {
@@ -75,6 +81,11 @@ public class ObjectManager
 
     public void Remove(int id)
     {
+        if (MyPlayer != null && MyPlayer.Id == id)
+            return;
+        if (_objects.ContainsKey(id) == false)
+            return;
+
         GameObject go = FindById(id);
         if (go == null)
             return;

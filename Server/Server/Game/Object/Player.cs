@@ -1,5 +1,6 @@
 ﻿using Google.Protobuf.Protocol;
 using Server.DB;
+using Server.Game.Room;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace Server.Game
     {
         public int PlayerDbId { get; set; }
         public ClientSession Session { get; set; }
+        public VisionCube Vision { get; private set; }
+
         public Inventory Inven { get; private set; } = new Inventory();
 
         public int WeaponDamage { get; private set; }
@@ -24,6 +27,7 @@ namespace Server.Game
         public Player()
         {
             ObjectType = GameObjectType.Player;
+            Vision = new VisionCube(this);
         }
 
         public override void OnDamaged(GameObject attacker, int damage)
