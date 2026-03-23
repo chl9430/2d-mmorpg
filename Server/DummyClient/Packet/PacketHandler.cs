@@ -1,34 +1,125 @@
-﻿using DummyClient;
+﻿using Google.Protobuf;
+using Google.Protobuf.Protocol;
 using ServerCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
 using System.Text;
-using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 class PacketHandler
 {
-    public static void S_BroadcastEnterGameHandler(PacketSession session, IPacket packet)
+    public static void S_EnterGameHandler(PacketSession session, IMessage packet)
     {
-        S_BroadcastEnterGame pkt = packet as S_BroadcastEnterGame;
-        ServerSession serverSession = session as ServerSession;
+        S_EnterGame enterGamePacket = packet as S_EnterGame;
     }
 
-    public static void S_BroadcastLeaveGameHandler(PacketSession session, IPacket packet)
+    public static void S_LeaveGameHandler(PacketSession session, IMessage packet)
     {
-        S_BroadcastLeaveGame pkt = packet as S_BroadcastLeaveGame;
-        ServerSession serverSession = session as ServerSession;
+        S_LeaveGame leaveGamePacket = packet as S_LeaveGame;
     }
 
-    public static void S_PlayerListHandler(PacketSession session, IPacket packet)
+    public static void S_SpawnHandler(PacketSession session, IMessage packet)
     {
-        S_PlayerList pkt = packet as S_PlayerList;
-        ServerSession serverSession = session as ServerSession;
+        S_Spawn spawnPacket = packet as S_Spawn;
     }
 
-    public static void S_BroadcastMoveHandler(PacketSession session, IPacket packet)
+    public static void S_DespawnHandler(PacketSession session, IMessage packet)
     {
-        S_BroadcastMove pkt = packet as S_BroadcastMove;
-        ServerSession serverSession = session as ServerSession;
+        S_Despawn despawnPacket = packet as S_Despawn;
+    }
+
+    public static void S_MoveHandler(PacketSession session, IMessage packet)
+    {
+        S_Move movePacket = packet as S_Move;
+    }
+
+    public static void S_SkillHandler(PacketSession session, IMessage packet)
+    {
+        S_Skill skillPacket = packet as S_Skill;
+    }
+
+    public static void S_ChangeHpHandler(PacketSession session, IMessage packet)
+    {
+        S_ChangeHp changePacket = packet as S_ChangeHp;
+    }
+
+    public static void S_DieHandler(PacketSession session, IMessage packet)
+    {
+        S_Die diePacket = packet as S_Die;
+    }
+
+    public static void S_ConnectedHandler(PacketSession session, IMessage packet)
+    {
+        C_Login loginPacket = new C_Login();
+        ServerSession serverSession = (ServerSession)session;
+
+        loginPacket.UniqueId = $"DummyClient_{serverSession.DummyId.ToString("0000")}";
+        serverSession.Send(loginPacket);
+    }
+
+    // 로그인 Ok, 캐릭터 목록
+    public static void S_LoginHandler(PacketSession session, IMessage packet)
+    {
+        S_Login loginPacket = packet as S_Login;
+        ServerSession serverSession = (ServerSession)session;
+
+        // TODO : 로비 UI에서 캐릭터 보여주고, 선택할 수 있도록
+        if (loginPacket.Players == null || loginPacket.Players.Count == 0)
+        {
+            C_CreatePlayer createPacket = new C_CreatePlayer();
+            createPacket.Name = $"Player_{serverSession.DummyId.ToString("0000")}";
+            serverSession.Send(createPacket);
+        }
+        else
+        {
+            // 무조건 첫번째로 로그인
+            LobbyPlayerInfo info = loginPacket.Players[0];
+            C_EnterGame enterGamePacket = new C_EnterGame();
+            enterGamePacket.Name = info.Name;
+            serverSession.Send(enterGamePacket);
+        }
+    }
+
+    public static void S_CreatePlayerHandler(PacketSession session, IMessage packet)
+    {
+        S_CreatePlayer createOkPacket = packet as S_CreatePlayer;
+        ServerSession serverSession = (ServerSession)session;
+
+        if (createOkPacket.Player == null)
+        {
+            // 생략
+        }
+        else
+        {
+            C_EnterGame enterGamePacket = new C_EnterGame();
+            enterGamePacket.Name = createOkPacket.Player.Name;
+            serverSession.Send(enterGamePacket);
+        }
+    }
+
+    public static void S_ItemListHandler(PacketSession session, IMessage packet)
+    {
+        S_ItemList itemList = packet as S_ItemList;
+    }
+
+    public static void S_AddItemHandler(PacketSession session, IMessage packet)
+    {
+    }
+
+    public static void S_EquipItemHandler(PacketSession session, IMessage packet)
+    {
+    }
+
+    public static void S_ChangeStatHandler(PacketSession session, IMessage packet)
+    {
+        S_ChangeStat statPacket = packet as S_ChangeStat;
+
+        // TODO
+    }
+
+    public static void S_PingHandler(PacketSession session, IMessage packet)
+    {
+        C_Pong pongPacket = new C_Pong();
     }
 }

@@ -40,23 +40,37 @@ namespace ServerCore
             // 재사용 될때를 대비해 초기값으로 돌려놔준다.
             args.AcceptSocket = null;
 
-            bool pending = _listenSocket.AcceptAsync(args);
+            try
+            {
+                bool pending = _listenSocket.AcceptAsync(args);
 
-            if (pending == false) // 바로 클라에게서 접속이 들어온다면
-                OnAcceptCompleted(null, args);
+                if (pending == false) // 바로 클라에게서 접속이 들어온다면
+                    OnAcceptCompleted(null, args);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         // 멀티 스레드 환경에서 돌아가기 때문에 주의해야하는 함수다.
         void OnAcceptCompleted(object sender, SocketAsyncEventArgs args)
         {
-            if (args.SocketError == SocketError.Success)
+            try
             {
-                Session session = _sessionFactory.Invoke();
-                session.Start(args.AcceptSocket);
-                session.OnConnected(args.AcceptSocket.RemoteEndPoint);
+                if (args.SocketError == SocketError.Success)
+                {
+                    Session session = _sessionFactory.Invoke();
+                    session.Start(args.AcceptSocket);
+                    session.OnConnected(args.AcceptSocket.RemoteEndPoint);
+                }
+                else
+                    Console.WriteLine(args.SocketError.ToString());
             }
-            else
-                Console.WriteLine(args.SocketError.ToString());
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
 
             // 다음 접속을 위해 다시한번 호출
             RegisterAccept(args);

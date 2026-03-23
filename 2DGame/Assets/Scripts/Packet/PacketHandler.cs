@@ -114,6 +114,7 @@ class PacketHandler
         Debug.Log("S_ConnectedHandler");
         C_Login loginPacket = new C_Login();
 
+        // 어카운트 아이디(지금은 임시처리)
         string path = Application.dataPath;
         loginPacket.UniqueId = path.GetHashCode().ToString();
         Managers.Network.Send(loginPacket);
