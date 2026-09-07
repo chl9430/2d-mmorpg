@@ -12,6 +12,10 @@ public class GameScene : BaseScene
 
         SceneType = Define.Scene.Game;
 
+        // TODO : 잠시 기생중
+        Managers.Web.BaseUrl = "https://localhost:7163/api";
+        WebPacket.SendCreateAccount("Rookiss", "1234");
+
         Managers.Map.LoadMap(1);
 
         Screen.SetResolution(640, 480, false);
